@@ -2,56 +2,46 @@
 title: "Lab 2"
 subtitle: "Advanced Data Visualization"
 editor: source
+  markdown: 
+    wrap: 72
 embed-resources: true
 ---
 
-# Instructions
-
-**Create a Quarto file for ALL Lab 2 (no separate files for Parts 1 and 2).**
-
-- Make sure your final file is carefully formatted, so that each analysis is
-clear and concise.
-- Be sure your knitted `.html` file shows **all** your source code, including
-any function definitions. 
-
 # Part One: Identifying Bad Visualizations
 
-If you happen to be bored and looking for a sensible chuckle, you should check
-out these [Bad Visualisations](https://badvisualisations.tumblr.com/). Looking through these is also a good exercise in cataloging what makes a visualization
-good or bad. 
+If you happen to be bored and looking for a sensible chuckle, you should check out these [Bad Visualisations](https://badvisualisations.tumblr.com/). Looking through these is also a good exercise in cataloging what makes a visualization good or bad.
 
 ## Dissecting a Bad Visualization
 
-Below is an example of a less-than-ideal visualization from the collection
-linked above. It comes to us from data provided for the [Wellcome Global Monitor 2018 report](https://wellcome.ac.uk/reports/wellcome-global-monitor/2018) by the 
-Gallup World Poll:
+Below is an example of a less-than-ideal visualization from the collection linked above. It comes to us from data provided for the [Wellcome Global Monitor 2018 report](https://wellcome.ac.uk/reports/wellcome-global-monitor/2018) by the Gallup World Poll:
 
 ![](images/bad-wellcome-graph.jpg)
 
-1. While there are certainly issues with this image, do your best to tell the
-story of this graph in words. That is, what is this graph telling you? What do
-you think the authors meant to convey with it?
+1.  While there are certainly issues with this image, do your best to tell the story of this graph in words. That is, what is this graph telling you? What do you think the authors meant to convey with it?
 
+**I believe this plot is trying to show us the proportion of people in a particular country that believe a vaccine is safe. It shows us one observation per country where the y-axis appears to be country? It also sorted the observations by proportion, so that it appears that the proportions increase as the y-axis goes up.**
 
+2.  List the variables that appear to be displayed in this visualization.
 
-2. List the variables that appear to be displayed in this visualization. 
-*Hint: Variables refer to columns in the data.*
+**The country, the global region of the country and the percentage of people in the country that believe a vaccine is safe.**
 
+3.  Now that you're versed in the grammar of graphics (e.g., `ggplot`), list the *aesthetics* used and which *variables* are mapped to each.
 
+**The x-axis the percentage of people in the country that believe a vaccine is safe. The y-axis is the country, the color is filled by global region.**
 
-3. Now that you're versed in the grammar of graphics (e.g., `ggplot`), list the *aesthetics* used and which *variables* are mapped to each.
+4.  What type of graph would you call this? Meaning, what `geom` would you use to produce this plot?
 
+**I would call this a scatter plot and would use geom point to produce it.**
 
+5.  Provide at least four problems or changes that would improve this graph.
 
-4. What type of graph would you call this? Meaning, what `geom` would you use
-to produce this plot?
+-   **I think this is a graph that is faceted by region of the world, but it lends to a strange stacked graph like view that is not very intuitive, and leaves some plots stranded from their axes. I would try faceting differently or trying to remove the facet entirely.**
 
+-   **I think having the y-axis be the countries is a bit strange, and that sorting it by the proportion feels odd, as though it is increasing over time or something, I would try sorting it alphabetically or removing the y-axis and making it a box-plot instead.**
 
+-   **I think having the legend at the bottom is unnecessary as the global region is also written directly onto each facet of the plot, so I would remove one of those, preferably the legend, depending on how my plot turns out.**
 
-5. Provide at least four problems or changes that would improve this graph. 
-*Please format your changes as bullet points!*
-
-
+-   **I think having to state that the dark vertical lines represent region medians but also not writing the number of each on the plot itself is confusing and forces the reader to then look for th median by finding the axis**
 
 ## Improving the Bad Visualization
 
@@ -59,8 +49,7 @@ The data for the Wellcome Global Monitor 2018 report can be downloaded at the fo
 
 <!-- at the "Dataset and crosstabs for all countries" link on the right side of the page-->
 
-There are two worksheets in the downloaded dataset file. You may need to read
-them in separately, but you may also just use one if it suffices.
+There are two worksheets in the downloaded dataset file. You may need to read them in separately, but you may also just use one if it suffices.
 
 ```{r}
 #| label: read-in-wellcome-data
@@ -68,9 +57,17 @@ them in separately, but you may also just use one if it suffices.
 
 ```
 
-6. Improve the visualization above by either re-creating it with the issues you
-identified fixed OR by creating a new visualization that you believe tells the
-same story better.
+6.  Improve the visualization above by either re-creating it with the issues you identified fixed OR by creating a new visualization that you believe tells the same story better.
+
+```{r calling data}
+data<-read_excel("C:\\Users\\Geetha\\Downloads\\wgm2018-dataset-crosstabs-all-countries.xlsx")
+
+national <- data[c('...1', '...2', '...3', 'National results','...5')]
+colnames(national) <- c("Country", "Question", "Response", "National_Results_Col_Per", "National_Results_Count")
+
+national <- national[!(national$Country %in% c(NA, 'Country')),]
+#drop title row since renamed cols alr
+```
 
 ```{r}
 #| label: new-and-improved-visualization
@@ -80,35 +77,21 @@ same story better.
 
 # Part Two: Broad Visualization Improvement
 
-The full Wellcome Global Monitor 2018 report can be found here: [https://wellcome.ac.uk/sites/default/files/wellcome-global-monitor-2018.pdf](https://wellcome.ac.uk/sites/default/files/wellcome-global-monitor-2018.pdf). 
-Surprisingly, the visualization above does not appear in the report despite the
-citation in the bottom corner of the image!
+The full Wellcome Global Monitor 2018 report can be found here: <https://wellcome.ac.uk/sites/default/files/wellcome-global-monitor-2018.pdf>. Surprisingly, the visualization above does not appear in the report despite the citation in the bottom corner of the image!
 
 ## Second Data Visualization Improvement
 
 **For this second plot, you must select a plot that uses maps so you can demonstrate your proficiency with the `leaflet` package!**
 
-7. Select a data visualization in the report that you think could be improved. 
-Be sure to cite both the page number and figure title. Do your best to tell the
-story of this graph in words. That is, what is this graph telling you? What do
-you think the authors meant to convey with it?
+7.  Select a data visualization in the report that you think could be improved. Be sure to cite both the page number and figure title. Do your best to tell the story of this graph in words. That is, what is this graph telling you? What do you think the authors meant to convey with it?
 
+8.  List the variables that appear to be displayed in this visualization.
 
-
-8. List the variables that appear to be displayed in this visualization.
-
-
-
-9. Now that you're versed in the grammar of graphics (ggplot), list the
-aesthetics used and which variables are specified for each.
-
-
+9.  Now that you're versed in the grammar of graphics (ggplot), list the aesthetics used and which variables are specified for each.
 
 10. What type of graph would you call this?
 
-
-
-11. List all of the problems or things you would improve about this graph.  
+11. List all of the problems or things you would improve about this graph.
 
 12. Improve the visualization above by either re-creating it with the issues you identified fixed OR by creating a new visualization that you believe tells the same story better.
 
@@ -121,28 +104,16 @@ aesthetics used and which variables are specified for each.
 ## Third Data Visualization Improvement
 
 **For this third plot, you must use one of the other `ggplot2` extension packages mentioned this week (e.g., `gganimate`, `plotly`, `patchwork`, `cowplot`).**
- 
-13. Select a data visualization in the report that you think could be improved. 
-Be sure to cite both the page number and figure title. Do your best to tell the
-story of this graph in words. That is, what is this graph telling you? What do
-you think the authors meant to convey with it?
 
-
+13. Select a data visualization in the report that you think could be improved. Be sure to cite both the page number and figure title. Do your best to tell the story of this graph in words. That is, what is this graph telling you? What do you think the authors meant to convey with it?
 
 14. List the variables that appear to be displayed in this visualization.
 
-
-
-15. Now that you're versed in the grammar of graphics (ggplot), list the
-aesthetics used and which variables are specified for each.
-
-
+15. Now that you're versed in the grammar of graphics (ggplot), list the aesthetics used and which variables are specified for each.
 
 16. What type of graph would you call this?
 
-
-
-17. List all of the problems or things you would improve about this graph.  
+17. List all of the problems or things you would improve about this graph.
 
 18. Improve the visualization above by either re-creating it with the issues you identified fixed OR by creating a new visualization that you believe tells the same story better.
 
